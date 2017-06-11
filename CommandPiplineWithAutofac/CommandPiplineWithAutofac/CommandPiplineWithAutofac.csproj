@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FirePersonCommand.cs" />
+    <Compile Include="FirePersonHandler.cs" />
+    <Compile Include="HirePersonCommand.cs" />
+    <Compile Include="HirePersonHandler.cs" />
+    <Compile Include="IHandler.cs" />
+    <Compile Include="Manager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
