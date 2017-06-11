@@ -10,20 +10,22 @@ namespace CommandPiplineWithAutofac
         private static void Main(string[] args)
         {
             var builder = new ContainerBuilder();
-
             builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
-                   .AsClosedTypesOf(typeof(IHandler<>))
-                   .InstancePerLifetimeScope();
+                   .AsClosedTypesOf(typeof(IHandler<>));
             Container = builder.Build();
+
             try
             {
                 using (var scope = Container.BeginLifetimeScope())
                 {
-                    var handler = scope.Resolve<IHandler<FirePersonHandler>>();
-                    handler.Handle(new FirePersonHandler());
+                    var handlerFire = scope.Resolve<IHandler<FirePersonCommand>>();
+                    handlerFire.Handle(new FirePersonCommand { Name = "Frank" });
+
+                    var handlerHire = scope.Resolve<IHandler<HirePersonCommand>>();
+                    handlerHire.Handle(new HirePersonCommand { Name = "Joe" });
                 }
 
-                Console.WriteLine(false);
+                Console.ReadKey(true);
             }
             catch (Exception e)
             {
@@ -33,9 +35,23 @@ namespace CommandPiplineWithAutofac
         }
     }
 
-    public interface IHandler
+    public class Manager
     {
-        void Handle<TCommand>(TCommand command) where TCommand : ICommand;
+        private readonly IHandler<FirePersonCommand> _handler;
+        public Manager(IHandler<FirePersonCommand> handler)
+        {
+            _handler = handler;
+        }
+
+        public void Fire()
+        {
+            _handler.Handle(new FirePersonCommand { Name = "Frank" });
+        }
+    }
+
+    public interface IHandler<T>
+    {
+        void Handle(T command);
     }
 
     public class FirePersonHandler : IHandler<FirePersonCommand>
@@ -46,27 +62,25 @@ namespace CommandPiplineWithAutofac
         }
     }
 
-    public class FirePersonCommand : ICommand
+    public class HirePersonHandler : IHandler<HirePersonCommand>
+    {
+        public void Handle(HirePersonCommand command)
+        {
+            Console.WriteLine("{0} was hired!", command.Name);
+        }
+    }
+
+    public class FirePersonCommand 
     {
         public string Name;
     }
 
-    public interface ICommand
+    public class HirePersonCommand
     {
+        public string Name;
     }
 
-    public class Manager
-    {
-        private readonly IHandler<FirePersonHandler> _handler;
 
-        public Manager(IHandler<FirePersonHandler> handler)
-        {
-            _handler = handler;
-        }
 
-        public void Fire()
-        {
-            _handler.Handle(new FirePersonCommand{Name = "Joe"});
-        }
-    }
+
 }
