@@ -4,8 +4,4 @@ namespace CommandPiplineWithAutofac
     {
         void Handle(T command);
     }
-
-    public interface IPersonCommand
-    {
-    }
 }

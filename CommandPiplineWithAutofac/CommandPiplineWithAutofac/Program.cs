@@ -47,48 +47,4 @@ namespace CommandPiplineWithAutofac
             }
         }
     }
-
-    public class AutofacHandlerResolver : IHandlerResolver
-    {
-        private readonly IComponentContext _context;
-
-        public AutofacHandlerResolver(IComponentContext context)
-        {
-            _context = context;
-        }
-
-        public IHandler<T> Resolve<T>() where T : IPersonCommand
-        {
-            return _context.ResolveOptional<IHandler<T>>();
-        }
-    }
-
-    public interface IHandlerResolver
-    {
-        IHandler<T> Resolve<T>() where T : IPersonCommand;
-    }
-
-    public class CommandDispatcher : ICommandDispatcher
-    {
-        private readonly IHandlerResolver _resolver;
-
-        public CommandDispatcher(IHandlerResolver resolver)
-        {
-            _resolver = resolver;
-        }
-
-        public void Dispatch<T>(T command) where T : IPersonCommand
-        {
-            var handler = _resolver.Resolve<T>();
-            if (handler != null)
-            {
-                handler.Handle(command);
-            }
-        }
-    }
-
-    public interface ICommandDispatcher
-    {
-        void Dispatch<T>(T command) where T : IPersonCommand;
-    }
 }

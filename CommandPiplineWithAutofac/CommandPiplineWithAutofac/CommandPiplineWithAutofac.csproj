@@ -45,11 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutofacHandlerResolver.cs" />
+    <Compile Include="CommandDispatcher.cs" />
     <Compile Include="FirePersonCommand.cs" />
     <Compile Include="FirePersonHandler.cs" />
     <Compile Include="HirePersonCommand.cs" />
     <Compile Include="HirePersonHandler.cs" />
+    <Compile Include="ICommandDispatcher.cs" />
     <Compile Include="IHandler.cs" />
+    <Compile Include="IHandlerResolver.cs" />
+    <Compile Include="IPersonCommand.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
