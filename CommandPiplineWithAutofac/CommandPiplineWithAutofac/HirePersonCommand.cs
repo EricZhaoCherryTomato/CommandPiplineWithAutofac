@@ -1,7 +1,8 @@
 ﻿namespace CommandPiplineWithAutofac
 {
-    public class HirePersonCommand
+    public class HirePersonCommand : IPersonCommand
     {
         public string Name;
     }
+
 }

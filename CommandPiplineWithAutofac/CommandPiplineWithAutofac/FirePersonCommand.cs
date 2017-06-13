@@ -1,6 +1,6 @@
 namespace CommandPiplineWithAutofac
 {
-    public class FirePersonCommand 
+    public class FirePersonCommand : IPersonCommand
     {
         public string Name;
     }
