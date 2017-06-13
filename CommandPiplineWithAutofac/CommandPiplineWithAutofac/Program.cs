@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Windows.Input;
+using System.Linq;
 using Autofac;
+using Autofac.Core;
 
 namespace CommandPiplineWithAutofac
 {
@@ -12,7 +13,13 @@ namespace CommandPiplineWithAutofac
         {
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyTypes(AppDomain.CurrentDomain.GetAssemblies())
-                   .AsClosedTypesOf(typeof(IHandler<>));
+                   .As(o => o.GetInterfaces()
+                             .Where(i => i.IsClosedTypeOf(typeof(IHandler<>)))
+                             .Select(i => new KeyedService("Handler", i)));
+
+            builder.RegisterGenericDecorator(typeof(Logger<>),
+                                             typeof(IHandler<>),
+                                             "Handler", "DecoratedHandler");
 
             builder.RegisterType<AutofacHandlerResolver>()
                    .As<IHandlerResolver>();
@@ -27,15 +34,14 @@ namespace CommandPiplineWithAutofac
                 {
                     //var handlerFire = scope.Resolve<IHandler<FirePersonCommand>>();
                     //handlerFire.Handle(new FirePersonCommand { Name = "Frank" });
-
+                    
                     //var handlerHire = scope.Resolve<IHandler<HirePersonCommand>>();
                     //handlerHire.Handle(new HirePersonCommand { Name = "Joe" });
 
                     var commandDispatcher = scope.Resolve<ICommandDispatcher>();
 
-                    commandDispatcher.Dispatch(new HirePersonCommand { Name = "Joe" });
-                    commandDispatcher.Dispatch(new FirePersonCommand { Name = "Frank" });
-
+                    commandDispatcher.Dispatch(new HirePersonCommand {Name = "Joe"});
+                    commandDispatcher.Dispatch(new FirePersonCommand {Name = "Frank"});
                 }
 
                 Console.ReadKey(true);
@@ -45,6 +51,24 @@ namespace CommandPiplineWithAutofac
                 Console.WriteLine(e);
                 throw;
             }
+        }
+    }
+
+    public class Logger<T> : IHandler<T> where T : IPersonCommand
+    {
+        private readonly IHandler<T> _decorated;
+
+        public Logger(IHandler<T> decorated)
+        {
+            _decorated = decorated;
+        }
+
+        public void Handle(T command)
+        {
+            Console.WriteLine("{0} executed.",
+                              command.GetType().Name);
+
+            _decorated.Handle(command);
         }
     }
 }

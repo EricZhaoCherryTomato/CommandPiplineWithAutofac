@@ -13,7 +13,7 @@ namespace CommandPiplineWithAutofac
 
         public IHandler<T> Resolve<T>() where T : IPersonCommand
         {
-            return _context.ResolveOptional<IHandler<T>>();
+            return _context.ResolveOptionalKeyed<IHandler<T>>("DecoratedHandler");
         }
     }
 }
